@@ -19,7 +19,7 @@ pipeline {
         stage('Create the Docker image of the application') {
             steps {
                 echo 'Image has been built'
-                sh 'docker build -t travula00/devops .'
+                sh 'docker build -t travula00/devops2 .'
             }
         }
         stage('Login to DockerHub') {
@@ -30,7 +30,7 @@ pipeline {
         }
         stage('Push the image to DockerHub') {
             steps {
-                sh 'docker push travula00/devops'
+                sh 'docker push travula00/devops2'
                 echo 'The image is pushed'
             }
         }
