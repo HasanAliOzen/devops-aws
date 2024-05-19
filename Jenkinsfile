@@ -13,7 +13,7 @@ pipeline {
         stage('Building the jar file') {
             steps {
                 echo 'Start building the jar'
-                sh 'gradle clean bootJar'
+                sh './gradlew clean bootJar'
             }
         }
         stage('Create the Docker image of the application') {
