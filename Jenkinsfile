@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('DockerAuth')
-        DOCKER_IMAGE = "travula/devops"
+        DOCKER_IMAGE = "travula00/devops"
         GIT_REPO = "https://github.com/HasanAliOzen/devops-aws.git"
     }
 
