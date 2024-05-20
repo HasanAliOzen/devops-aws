@@ -1,40 +1,52 @@
 pipeline {
     agent any
-    tools {
-        gradle 8.7
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('DockerAuth')
+        DOCKER_IMAGE = "travula/devops"
+        GIT_REPO = "https://github.com/HasanAliOzen/devops-aws.git"
     }
+
     stages {
         stage('Pull the project form GitHub') {
             steps {
                 echo 'Getting the project from GitHub'
-                git 'https://github.com/HasanAliOzen/devops-aws'
+                git url: "${env.GIT_REPO}", branch: 'main'
             }
         }
+
         stage('Building the jar file') {
             steps {
                 echo 'Start building the jar'
-                sh 'gradle bootJar'
+                sh './gradlew clean bootJar'
             }
         }
-        stage('Create the Docker image of the application') {
-            agent any
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Image has been built'
-                sh 'docker build -t travula00/devops .'
-            }
-        }
-        stage('Login to DockerHub') {
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'DockerAuth', passwordVariable: 'DockerAuthPassword', usernameVariable: 'DockerAuthUser')]) {
-                    sh "docker login -u ${env.DockerAuthUser} -p ${env.DockerAuthPassword}"
+                script {
+                    dockerImage = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
                 }
+                echo 'Image has been built'
             }
         }
-        stage('Push the image to DockerHub') {
+
+        stage('Push Docker Image') {
             steps {
-                sh 'docker push travula00/devops'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', "${env.DOCKER_HUB_CREDENTIALS}") {
+                        dockerImage.push()
+                        dockerImage.push('latest')
+                    }
+                }
                 echo 'The image is pushed'
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
