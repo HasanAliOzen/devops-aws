@@ -15,5 +15,8 @@ spring:
 aws:
   bucket:
     name: ${AWS_BUCKET_NAME:devops-gradle}
-  accessKey: ${AWS_ACCESS_KEY_ID}
-  secretKey: ${AWS_SECRET_ACCESS_KEY}
+  accessKey: ${AWS_ACCESS_KEY_ID:QWERQWERQWERQWREQWER}
+  secretKey: ${AWS_SECRET_ACCESS_KEY:QWERQWERQWERQWREQWERQWERQWERQWERQWERQWER}
+
+server:
+  port: ${PORT:3000}
