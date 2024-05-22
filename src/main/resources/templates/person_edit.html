@@ -39,7 +39,7 @@
                     <!-- Show current image -->
                     <div class="mb-3">
                         <label class="form-label">Current Image</label><br>
-                        <img th:src="@{ '/images/' + ${person.getImgUrl()}}" alt="Current Image" style="max-width: 100px; max-height: 100px;">
+                        <img th:src="@{${person.getImgUrl()}}" alt="Current Image" style="max-width: 100px; max-height: 100px;">
                     </div>
 
                     <div class="mb-3">
