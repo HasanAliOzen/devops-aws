@@ -47,7 +47,7 @@ public class PersonController {
             if (person.getImgUrl() != null && !person.getImgUrl().isEmpty()) {
                 try {
                     person.setImageFile(fileService.downloadFile(person.getImgUrl()));
-                    person.setImgUrl( "/images/" +person.getImgUrl());
+                    person.setImgUrl( "/view/" +person.getImgUrl());
                     people.add(person);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -93,6 +93,7 @@ public class PersonController {
     public String editPerson(@PathVariable Long id, Model model) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid person Id:" + id));
+        person.setImgUrl( "/view/" +person.getImgUrl());
         model.addAttribute("person", person);
         return "person_edit";
     }
@@ -145,7 +146,7 @@ public class PersonController {
         return "redirect:/";
     }
 
-    @GetMapping("/images/{fileName}")
+    @GetMapping("/view/{fileName}")
     public ResponseEntity<InputStreamResource> viewFile(@PathVariable String fileName){
         var s3Object = fileService.getFile(fileName);
         var content = s3Object.getObjectContent();
