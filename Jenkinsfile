@@ -52,12 +52,5 @@ pipeline {
                 echo 'The image is pushed'
             }
         }
-
-        stage('Pull Docker Image') {
-            steps {
-                sh 'docker pull travula00/devops:latest'
-                echo 'The image is pulled'
-            }
-        }
     }
 }
