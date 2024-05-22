@@ -30,6 +30,10 @@ public class FileServiceImpl implements FileService {
 
     private final AmazonS3 s3Client;
 
+    public S3Object getFile(String keyName) {
+        return s3Client.getObject(bucketName, keyName);
+    }
+
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         // convert multipart file  to a file

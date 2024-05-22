@@ -9,6 +9,10 @@ import dev.travula.service.FileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +36,7 @@ public class PersonController {
     private final FileService fileService;
 
 
+
     private static final String UPLOAD_DIR = "src/main/resources/static/images/";
 
     @GetMapping
@@ -42,6 +47,7 @@ public class PersonController {
             if (person.getImgUrl() != null && !person.getImgUrl().isEmpty()) {
                 try {
                     person.setImageFile(fileService.downloadFile(person.getImgUrl()));
+                    person.setImgUrl( "/images/" +person.getImgUrl());
                     people.add(person);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -137,6 +143,29 @@ public class PersonController {
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/images/{fileName}")
+    public ResponseEntity<InputStreamResource> viewFile(@PathVariable String fileName){
+        var s3Object = fileService.getFile(fileName);
+        var content = s3Object.getObjectContent();
+
+        // Determine the content type
+        String contentType;
+        if (fileName.endsWith(".png")) {
+            contentType = MediaType.IMAGE_PNG_VALUE;
+        } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            contentType = MediaType.IMAGE_JPEG_VALUE;
+        } else if (fileName.endsWith(".gif")) {
+            contentType = MediaType.IMAGE_GIF_VALUE;
+        } else {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE; // Default binary type
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                .body(new InputStreamResource(content));
     }
 
     private void saveImage(Person person, MultipartFile imageFile) throws IOException {
