@@ -35,7 +35,7 @@ public class PersonController {
     private final PersonRepository personRepository;
     private final FileService fileService;
 
-    //Test comment for jenkins
+
 
     private static final String UPLOAD_DIR = "src/main/resources/static/images/";
 
